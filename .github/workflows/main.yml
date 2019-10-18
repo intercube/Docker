@@ -10,7 +10,7 @@ jobs:
     - name: Publish to Registry
       uses: elgohr/Publish-Docker-Github-Action@master
       with:
-        name: intercube/php-fpm-docker/php-fpm-docker
+        name: Intercube/Docker/php-fpm
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         registry: docker.pkg.github.com
@@ -23,7 +23,7 @@ jobs:
     - name: Publish to Registry
       uses: elgohr/Publish-Docker-Github-Action@master
       with:
-        name: intercube/php-fpm-docker/php-fpm-docker
+        name: Intercube/Docker/nginx-symfony
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         registry: docker.pkg.github.com
