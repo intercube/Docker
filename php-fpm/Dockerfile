@@ -1,4 +1,4 @@
-FROM alpine:3.8
+FROM alpine:3.11.5
 
 LABEL maintainer="Jeroen Ketelaar"
 
