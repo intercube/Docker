@@ -1,6 +1,6 @@
 FROM alpine:latest
 
-LABEL maintainer="Jeroen Ketelaar"
+LABEL author="Intercube" maintainer="opensource@intercube.io"
 
 RUN apk add --update nginx
 RUN rm -rf /var/cache/apk/* && rm -rf /tmp/*
