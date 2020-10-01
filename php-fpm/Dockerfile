@@ -1,6 +1,6 @@
 FROM alpine:3.12.0
 
-LABEL maintainer="Jeroen Ketelaar"
+LABEL author="Intercube" maintainer="opensource@intercube.io"
 
 RUN apk add --update \
     curl \
