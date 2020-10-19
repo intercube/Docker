@@ -11,6 +11,7 @@ RUN apk add --update \
     php7-ctype \
     php7-curl \
     php7-dom \
+    php7-exif \
     php7-gd \
     php7-iconv \
     php7-imagick \
