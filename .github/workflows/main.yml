@@ -16,6 +16,19 @@ jobs:
         registry: docker.pkg.github.com
         workdir: php-fpm
 
+  publish-nginx-wordpress:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: Publish to Registry
+      uses: elgohr/Publish-Docker-Github-Action@master
+      with:
+        name: intercube/docker/nginx-wordpress
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        registry: docker.pkg.github.com
+        workdir: nginx-wordpress
+
   publish-nginx-symfony:
     runs-on: ubuntu-latest
     steps:
