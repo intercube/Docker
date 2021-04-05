@@ -1,5 +1,5 @@
 ### [Our images](https://github.com/orgs/intercube/packages?repo_name=Docker)
-- Symfony: [`docker.pkg.github.com/intercube/docker/php-fpm:latest`](https://github.com/intercube/Docker/packages/39613)
+- Symfony: [`docker.pkg.github.com/intercube/docker/nginx-symfony:latest`](https://github.com/intercube/Docker/packages/39611)
 - Magento 2: [`docker.pkg.github.com/intercube/docker/nginx-magento2:latest`](https://github.com/intercube/Docker/packages/70039)
 - WordPress: [`docker.pkg.github.com/intercube/docker/nginx-wordpress:latest`](https://github.com/intercube/Docker/packages/642306)
 
