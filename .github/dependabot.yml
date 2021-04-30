@@ -6,3 +6,24 @@ updates:
     interval: daily
     time: "04:00"
   open-pull-requests-limit: 10
+
+- package-ecosystem: docker
+  directory: "/nginx-wordpress"
+  schedule:
+    interval: daily
+    time: "04:00"
+  open-pull-requests-limit: 10
+
+- package-ecosystem: docker
+  directory: "/nginx-symfony"
+  schedule:
+    interval: daily
+    time: "04:00"
+  open-pull-requests-limit: 10
+
+- package-ecosystem: docker
+  directory: "/nginx-magento2"
+  schedule:
+    interval: daily
+    time: "04:00"
+  open-pull-requests-limit: 10
