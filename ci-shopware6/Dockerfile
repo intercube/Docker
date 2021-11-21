@@ -31,6 +31,8 @@ RUN apt-get install -y \
     wget \
     zip
 
+RUN useradd -m docker && echo "docker:docker" | chpasswd && adduser docker sudo
+
 RUN LC_ALL=en_US.UTF-8 add-apt-repository ppa:ondrej/php && apt-get update && apt-get install -y php7.4
 RUN apt-get install -y \
     php7.4-curl \
