@@ -9,6 +9,11 @@ RUN DEBIAN_FRONTEND=noninteractive
 SHELL ["/bin/bash", "-c"]
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
+RUN groupadd --non-unique --gid ${GROUPS[0]} $USER \
+  || addgroup -gid ${GROUPS[0]} $USER
+RUN useradd  --non-unique --gid ${GROUPS[0]} --uid $UID --create-home --home-dir /home/$USER --shell $SHELL $USER \
+  || adduser -gid $USER -u $UID -h /home/$USER -s $SHELL -D $USER
+
 RUN apt-get update
 RUN apt-get install -y \
     apt-utils \
@@ -60,8 +65,3 @@ RUN curl -sL https://deb.nodesource.com/setup_16.x -o nodesource_setup.sh
 RUN bash nodesource_setup.sh
 RUN apt-get install nodejs -y
 RUN npm install npm@8 -g
-
-RUN groupadd --non-unique --gid ${GROUPS[0]} $USER \
-  || addgroup -g ${GROUPS[0]} $USER
-RUN useradd  --non-unique --gid ${GROUPS[0]} --uid $UID --create-home --home-dir /home/$USER --shell $SHELL $USER \
-  || adduser  -G $USER -u $UID -h /home/$USER -s $SHELL -D $USER
