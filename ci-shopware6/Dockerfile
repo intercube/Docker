@@ -5,19 +5,9 @@ LABEL author="Intercube" maintainer="opensource@intercube.io"
 ENV TZ='Europe/Amsterdam'
 
 RUN export LC_ALL=C.UTF-8
-RUN THIS_USER=intercube
 RUN DEBIAN_FRONTEND=noninteractive
 SHELL ["/bin/bash", "-c"]
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-
-RUN echo $USER
-RUN echo $THIS_USER
-RUN echo $DEBIAN_FRONTEND
-
-RUN groupadd --non-unique --gid ${GROUPS[0]} $THIS_USER \
-  || addgroup -gid ${GROUPS[0]} $THIS_USER
-RUN useradd  --non-unique --gid ${GROUPS[0]} --uid $UID --create-home --home-dir /home/$THIS_USER --shell $SHELL $THIS_USER \
-  || adduser -gid $THIS_USER -u $UID -h /home/$THIS_USER -s $SHELL -D $THIS_USER
 
 RUN apt-get update
 RUN apt-get install -y \
