@@ -9,7 +9,7 @@ RUN DEBIAN_FRONTEND=noninteractive
 SHELL ["/bin/bash", "-c"]
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-RUN echo $USER
+RUN export USER=docker
 
 RUN groupadd --non-unique --gid ${GROUPS[0]} $USER \
   || addgroup -gid ${GROUPS[0]} $USER
