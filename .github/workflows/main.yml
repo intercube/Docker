@@ -1,6 +1,6 @@
 name: Publish Docker images
 
-on: [push]
+on: [push,workflow_dispatch]
 
 jobs:
   publish-php-fpm:
