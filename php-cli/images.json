@@ -1,0 +1,33 @@
+{
+  "release": "r1",
+  "images": [
+    {
+      "version": "7.4",
+      "baseImage": "chialab/php:7.4@sha256:7078524139c241ec568f9cb913cd0dc862d0ad9c08dfa4097248533c52810e84"
+    },
+    {
+      "version": "8.0",
+      "baseImage": "chialab/php:8.0@sha256:0ddda582c48e963852798411006fe8b859c9f2ffa1ac2fe024b7835ade4db759"
+    },
+    {
+      "version": "8.1",
+      "baseImage": "chialab/php:8.1@sha256:05d93acaffa1a980632825773b34d3e4a2f34d4a1d469118bb3f4251b78f8875"
+    },
+    {
+      "version": "8.2",
+      "baseImage": "chialab/php:8.2@sha256:c3c9195d270c8ac708d23055593634ef8f1526f474fe897d66e1d85582397c7c"
+    },
+    {
+      "version": "8.3",
+      "baseImage": "chialab/php:8.3@sha256:d3373fb609485e68ddcd8665f7f355785af08f55a42e925d050ec00e099f7d0f"
+    },
+    {
+      "version": "8.4",
+      "baseImage": "chialab/php:8.4@sha256:a438c4505dccb9f4788284dab9ca53131acceb6e848a3ccfa24dd43ea632730e"
+    },
+    {
+      "version": "8.5",
+      "baseImage": "chialab/php:8.5@sha256:7f1c0b3e34fe2516ddeea75e7474064df538d7e1fc06ab3508331fb12310fd5e"
+    }
+  ]
+}

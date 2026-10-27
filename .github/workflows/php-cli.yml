@@ -1,0 +1,76 @@
+name: PHP CLI build images
+
+on:
+  pull_request:
+    paths: ['php-cli/**', '.github/workflows/php-cli.yml']
+  push:
+    branches: [master]
+    paths: ['php-cli/**', '.github/workflows/php-cli.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: php-cli-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      images: ${{ steps.manifest.outputs.images }}
+      release: ${{ steps.manifest.outputs.release }}
+    steps:
+      - uses: actions/checkout@v7
+      - id: manifest
+        run: |
+          echo "images=$(jq -c '.images' php-cli/images.json)" >> "$GITHUB_OUTPUT"
+          echo "release=$(jq -r '.release' php-cli/images.json)" >> "$GITHUB_OUTPUT"
+
+  build-test:
+    needs: matrix
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.matrix.outputs.images) }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: docker/setup-buildx-action@v4
+      - name: Build PHP ${{ matrix.version }}
+        uses: docker/build-push-action@v7
+        with:
+          context: php-cli
+          build-args: BASE_IMAGE=${{ matrix.baseImage }}
+          platforms: linux/amd64
+          load: true
+          tags: intercube-php-cli:test
+          cache-from: type=gha,scope=php-cli-${{ matrix.version }}
+          cache-to: type=gha,mode=max,scope=php-cli-${{ matrix.version }}
+      - name: Verify extensions and non-root Composer
+        env:
+          BASE_IMAGE: ${{ matrix.baseImage }}
+          PHP_VERSION: ${{ matrix.version }}
+        run: bash php-cli/test-image.sh intercube-php-cli:test "$BASE_IMAGE" "$PHP_VERSION"
+      - name: Log in to GHCR
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/master'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish tested image
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/master'
+        env:
+          PHP_VERSION: ${{ matrix.version }}
+          RELEASE: ${{ needs.matrix.outputs.release }}
+        run: |
+          image="ghcr.io/intercube/docker/php-cli"
+          for tag in "$PHP_VERSION-$RELEASE" "$PHP_VERSION-$GITHUB_SHA"; do
+            docker tag intercube-php-cli:test "$image:$tag"
+            docker push "$image:$tag"
+          done
