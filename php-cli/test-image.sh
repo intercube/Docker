@@ -6,7 +6,6 @@ base_image="${2:?Base image is required}"
 php_version="${3:?PHP minor version is required}"
 fixture="$(mktemp -d)"
 trap 'rm -rf "$fixture"' EXIT
-chmod 777 "$fixture"
 
 # Keep every extension supplied by Chialab, in addition to FTP and FTPS.
 docker run --rm "$base_image" php -r 'echo json_encode(get_loaded_extensions());' > "$fixture/base-extensions.json"
@@ -33,7 +32,7 @@ cat > "$fixture/composer.json" <<'JSON'
 JSON
 
 # Match GoCD's arbitrary non-root UID, writable source directory and Composer cache.
-docker run --rm --user 12345:12345 \
+docker run --rm --user "$(id -u):$(id -g)" \
   -e COMPOSER_HOME=/mnt/pipeline/.composer \
   -w /mnt/pipeline -v "$fixture:/mnt/pipeline" \
   "$image" sh -ec 'php check.php "$1"; composer install --no-dev --no-plugins --no-scripts --no-interaction --no-progress; composer check-platform-reqs --no-dev' sh "$php_version"
