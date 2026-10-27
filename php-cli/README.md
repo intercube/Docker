@@ -6,7 +6,8 @@ point and support for GoCD's arbitrary non-root user. They are separate from the
 older PHP-FPM development image in this repository.
 
 `images.json` lists the PHP versions used by the active GoCD configurations on
-27 October 2026: 7.4 and 8.0–8.5. Each base image is pinned by digest. Legacy
+27 October 2026: 7.4 and 8.0–8.5. Each build pulls the current Chialab tag for that
+PHP minor version. Legacy
 versions are included for existing projects; this does not change their PHP
 support lifecycle or the PHP versions a particular Magento release supports.
 
@@ -21,9 +22,11 @@ bash php-cli/test-image.sh intercube-php-cli:test "$base_image" 8.4
 Pull requests build and test every listed version without publishing. Changes
 merged to `master` publish tested `linux/amd64` images to
 `ghcr.io/intercube/docker/php-cli`, matching the current GoCD runner architecture.
-Tags contain either the PHP version and release (`8.4-r1`) or the PHP version and
-full Git commit SHA. Production pipeline configuration should pin the published
-image digest as well, for example `ghcr.io/intercube/docker/php-cli:8.4-r1@sha256:…`.
+Build pipelines use version-specific moving tags such as
+`ghcr.io/intercube/docker/php-cli:8.4-latest`. Every published image also gets a
+unique tag containing the PHP version, source commit, workflow run and attempt
+for diagnostics and rollback. These are build images and do not configure the
+PHP runtime on hosting servers.
 
 ## Nexus rollout
 
@@ -31,7 +34,9 @@ image digest as well, for example `ghcr.io/intercube/docker/php-cli:8.4-r1@sha25
 2. In Nexus, create project overrides for every PHP build step of the initial
    development project: Composer install, dependency compilation and static
    content deployment. Preserve the task, ordering and working directory.
-3. Set each override's Docker image to the same PHP version and image digest.
+3. Set each override's Docker image to the same PHP version's `-latest` tag.
+   Nexus pulls Intercube PHP CLI `-latest` images before use, so cached images do
+   not prevent published updates reaching build agents.
    Synchronize that project's template through Nexus; do not hand-edit its
    generated GoCD JSON, which Nexus would overwrite on the next sync.
 4. Run the development pipeline and verify Composer, Magento compilation, release
@@ -47,7 +52,12 @@ with matching image checks, rather than bypassing Composer requirements.
 
 ## Updates
 
-Refresh the base digests through a reviewed change, increment the release in
-`images.json`, and let the complete version matrix pass before rollout. Test the
-application lock files and retain the previous digest for rollback. There is no
-automatic change to existing pipelines when an image is rebuilt or published.
+Run the PHP CLI build workflow on `master` to refresh from Chialab's current
+version-specific tags. A version's compatibility checks must pass before its
+`-latest` tag is published. Existing pipelines using that tag receive the updated
+image on their next build. For an image regression, switch the affected project's
+build steps to the previous run's unique image tag while investigating.
+
+Adding a PHP version or changing image behavior requires a reviewed change and
+the complete version matrix to pass. Check application lock files as part of the
+development rollout; the smoke fixture checks FTP without downloading Magento.

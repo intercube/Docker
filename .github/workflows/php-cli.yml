@@ -20,13 +20,11 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       images: ${{ steps.manifest.outputs.images }}
-      release: ${{ steps.manifest.outputs.release }}
     steps:
       - uses: actions/checkout@v7
       - id: manifest
         run: |
           echo "images=$(jq -c '.images' php-cli/images.json)" >> "$GITHUB_OUTPUT"
-          echo "release=$(jq -r '.release' php-cli/images.json)" >> "$GITHUB_OUTPUT"
 
   build-test:
     needs: matrix
@@ -47,6 +45,7 @@ jobs:
           context: php-cli
           build-args: BASE_IMAGE=${{ matrix.baseImage }}
           platforms: linux/amd64
+          pull: true
           load: true
           tags: intercube-php-cli:test
           cache-from: type=gha,scope=php-cli-${{ matrix.version }}
@@ -67,10 +66,9 @@ jobs:
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/master'
         env:
           PHP_VERSION: ${{ matrix.version }}
-          RELEASE: ${{ needs.matrix.outputs.release }}
         run: |
           image="ghcr.io/intercube/docker/php-cli"
-          for tag in "$PHP_VERSION-$RELEASE" "$PHP_VERSION-$GITHUB_SHA"; do
+          for tag in "$PHP_VERSION-latest" "$PHP_VERSION-$GITHUB_SHA-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"; do
             docker tag intercube-php-cli:test "$image:$tag"
             docker push "$image:$tag"
           done
